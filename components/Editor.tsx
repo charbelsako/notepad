@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { File } from '../typings';
 
 interface Props {
   file: File;
+  content: string;
+  setContent: Function;
 }
 
-function Editor({ file }: Props): JSX.Element {
-  const [content, setContent] = useState('');
-
+function Editor({ file, content, setContent }: Props): JSX.Element {
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (!file) return;
     console.log('use effect ran');
     setContent(file.content);
   }, [file]);

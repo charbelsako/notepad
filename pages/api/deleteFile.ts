@@ -3,15 +3,13 @@ import { sanityClient } from '../../sanity';
 import { File } from '../../typings';
 
 interface Data {
-  createdFile: File;
+  deletedFile: File;
 }
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ): Promise<void> {
-  console.log(req.body);
-  const file: any = { _type: 'genericfile', filename: req.body.filename, content: req.body.content };
-  const createdFile: File = await sanityClient.create(file);
-  res.status(200).json({ createdFile });
+  const deletedFile: File = await sanityClient.delete(req.query.id);
+  res.status(200).json({ deletedFile });
 }

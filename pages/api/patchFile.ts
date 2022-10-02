@@ -3,15 +3,14 @@ import { sanityClient } from '../../sanity';
 import { File } from '../../typings';
 
 interface Data {
-  createdFile: File;
+  updatedFile: File;
 }
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ): Promise<void> {
-  console.log(req.body);
-  const file: any = { _type: 'genericfile', filename: req.body.filename, content: req.body.content };
-  const createdFile: File = await sanityClient.create(file);
-  res.status(200).json({ createdFile });
+  const file: any = { _id: req.body._id, filename: req.body.filename, content: req.body.content };
+  const updatedFile: File = await sanityClient.patch(file._id).set({ content: file.content }).commit();
+  res.status(200).json({ updatedFile });
 }
