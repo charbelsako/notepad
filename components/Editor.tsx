@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { File } from '../typings';
 
-type Props = {
+interface Props {
   file: File;
-};
+}
 
-function Editor({ file }: Props) {
-  const [content, setContent] = useState(file.content);
+function Editor({ file }: Props): JSX.Element {
+  const [content, setContent] = useState('');
 
   useEffect(() => {
     console.log('use effect ran');
     setContent(file.content);
   }, [file]);
 
-  const changeContent = (event: any) => {
+  const changeContent = (event: any): void => {
     setContent(event.target.value);
     console.log(event.target.value);
   };

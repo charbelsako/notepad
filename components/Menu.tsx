@@ -1,21 +1,21 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import {
   AiOutlineFileAdd,
   AiOutlineFileText,
   AiOutlineSave,
 } from 'react-icons/ai';
-import { FileContext } from '../pages/index';
-import { sanityClient } from '../sanity';
+import { File } from '../typings.d';
+import { createFile } from '../utils/createFile';
 
 interface Props {
   openFile: Function;
+  files: File[];
+  selectedFile: File;
 }
 
-function Menu({ openFile }: Props): JSX.Element {
-  // Call api and get all files (maybe names or content as well)
-  const [files, setFiles] = useContext(FileContext);
-
-  const createFile = async (): Promise<void> => {
+function Menu({ openFile, files, selectedFile }: Props): JSX.Element {
+  const makeNewFile = (): void => {
+    console.log('hfewouifh');
     // @TODO: use a form modal or something
     const filename: string = window.prompt('File name') || 'Default+';
     const foundFile = files.filter(file => file.filename === filename);
@@ -24,26 +24,28 @@ function Menu({ openFile }: Props): JSX.Element {
       return;
     }
     // Call API to save file
-    const newFile = { _type: 'file', filename, content: '' };
-    const mutation = await sanityClient.create(newFile);
-    await mutation.commit();
-    // Set the files
-    setFiles([...files, newFile]);
+    createFile(filename)
+      .then(doc => console.log(doc))
+      .catch(e => console.error(e));
   };
+
+  // const callMakeFile =
 
   return (
     <div className='h-screen flex flex-col text-left w-[250px] border border-gray/30 text-black bg-white'>
-      <header className='py-1 flex flex-row justify-center items-center w-full'>
-        <h1 className='px-2 pt-2'>Notepad</h1>
-        <div className='flex ml-auto pr-2 space-x-2'>
+      <header className='p-2 flex flex-row justify-center items-center w-full'>
+        <h1>Notepad</h1>
+        <div className='flex ml-auto space-x-2'>
           <button
-            onClick={() => createFile()}
+            onClick={makeNewFile}
             className='hover:bg-gray-400/40 p-1 rounded'
           >
             <AiOutlineFileAdd />
           </button>
           <button
-            onClick={() => createFile()}
+            onClick={async () => {
+              await makeNewFile();
+            }}
             className='hover:bg-gray-400/40 p-1 rounded'
           >
             <AiOutlineSave />
@@ -52,10 +54,16 @@ function Menu({ openFile }: Props): JSX.Element {
       </header>
       <hr className='py-3 mt-3' />
       <section id='fileList '>
-        <ul className='space-y-1 flex flex-col'>
+        <ul className='space-y-0 flex flex-col'>
           {files.map((file, index) => (
-            <button key={index} onClick={() => openFile(index)}>
-              <li className='w-full pl-3 hover:bg-gray-200/70 cursor-pointer flex items-center'>
+            <button
+              key={index}
+              onClick={() => openFile(index)}
+              className={`py-1 hover:bg-gray-200/70 ${
+                file._id === selectedFile._id ? 'bg-gray-200/70' : ''
+              }`}
+            >
+              <li className={'w-full pl-3  cursor-pointer flex items-center'}>
                 <AiOutlineFileText className='mr-2' />
                 <span className='text-[13px]'>{file.filename}</span>
               </li>

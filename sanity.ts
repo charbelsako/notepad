@@ -1,6 +1,5 @@
 // lib/sanity.js
 import { createClient } from 'next-sanity';
-import createImageUrlBuilder from '@sanity/image-url';
 
 export const config = {
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
@@ -18,7 +17,7 @@ export const config = {
    * OPTIONAL config to enable authentication with custom token
    * You might need this if you host the preview on a different url than Sanity Studio
    */
-  // token: '<sanity access token>',
+  token: process.env.SANITY_TOKEN,
   // EventSource: /* provide your own event source implementation. Required in browsers to support the above token parameter. */
 };
 
@@ -27,7 +26,6 @@ export const sanityClient = createClient(config);
  * Set up a helper function for generating Image URLs with only the asset reference data in your documents.
  * Read more: https://www.sanity.io/docs/image-url
  **/
-export const urlFor = (source: any): any => createImageUrlBuilder(config).image(source);
 
 // Set up the live preview subscription hook
 // export const usePreviewSubscription = createPreviewSubscriptionHook(config);

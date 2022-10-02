@@ -1,26 +1,18 @@
-import type { NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
+import { useState } from 'react';
 import Menu from '../components/Menu';
 import Editor from '../components/Editor';
-import { createContext, useState } from 'react';
 import { File } from '../typings';
+import { fetchFiles } from '../utils/fetchFiles';
 
-const myFiles: File[] = [{ filename: 'index', content: 'Some Basic Content' }];
+interface Props {
+  files: File[];
+}
 
-export const FileContext = createContext<[File[], Function]>([
-  myFiles,
-  () => {},
-]);
-
-const Home: NextPage = () => {
-  const [files, setFiles] = useState([
-    { filename: 'index', content: 'Some Basic Content' },
-  ]);
-
+const Home: NextPage<Props> = ({ files }: Props) => {
   const [selectedFile, setSelectedFile] = useState<File>(files[0]);
 
-  const openFile = (index: number) => {
-    console.log('This is the index', index);
-    console.log('This is the state', files);
+  const openFile = (index: number): void => {
     // Get the content of the file
     const file: File = files[index];
     // Pass to Editor
@@ -28,13 +20,20 @@ const Home: NextPage = () => {
   };
 
   return (
-    <FileContext.Provider value={[files, setFiles]}>
-      <div className='flex flex-row w-full'>
-        <Menu openFile={openFile} />
-        <Editor file={selectedFile} />
-      </div>
-    </FileContext.Provider>
+    <div className='flex flex-row w-full'>
+      <Menu openFile={openFile} files={files} selectedFile={selectedFile} />
+      <Editor file={selectedFile} />
+    </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
+  const files: File[] = await fetchFiles();
+  return {
+    props: {
+      files,
+    },
+  };
 };
 
 export default Home;
