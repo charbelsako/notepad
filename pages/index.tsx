@@ -1,5 +1,5 @@
 import type { GetServerSideProps, NextPage } from 'next';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Menu from '../components/Menu';
 import Editor from '../components/Editor';
 import { File } from '../typings';
