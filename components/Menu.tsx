@@ -38,7 +38,7 @@ function Menu({
     }
     // Call API to save file
     createFile(filename)
-      .then(doc => setFiles([...files, doc]))
+      .then(doc => setFiles([doc, ...files]))
       .catch(e => console.error(e));
   };
 
@@ -46,7 +46,7 @@ function Menu({
     // Call API to save file
     updateFile({ ...selectedFile, content })
       .then(doc =>
-        setFiles([...files.filter(file => file._id !== doc._id), doc])
+        setFiles([doc, ...files.filter(file => file._id !== doc._id)])
       )
       .catch(e => console.error(e));
   };
@@ -88,7 +88,7 @@ function Menu({
               key={index}
               onClick={() => openFile(index)}
               className={`py-1 hover:bg-gray-200/70 ${
-                file._id === selectedFile._id ? 'bg-gray-200/70' : ''
+                file._id === selectedFile?._id ? 'bg-gray-200/70' : ''
               }`}
             >
               <li className={'w-full pl-3  cursor-pointer flex items-center'}>
